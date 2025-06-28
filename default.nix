@@ -181,6 +181,7 @@ in
             nixpkgs.config = { 
                 packageOverrides = pkgs: {
                     demonsaw = pkgs.callPackage ./packages/demonsaw/default.nix { };
+                    fooyin = pkgs.callPackage ./packages/fooyin/default.nix { };
                     lmstudio = pkgs.callPackage ./packages/lmstudio/default.nix { };
                     nook-desktop = pkgs.callPackage ./packages/nook-desktop/default.nix {};
                     theme_pack = pkgs.callPackage ./packages/theme_pack/default.nix { };
