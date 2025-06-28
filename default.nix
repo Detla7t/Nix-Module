@@ -178,6 +178,17 @@ in
                 };
             });
 
+            nixpkgs.config = { 
+                packageOverrides = pkgs: {
+                    demonsaw = pkgs.callPackage ./packages/demonsaw/default.nix { };
+                    lmstudio = pkgs.callPackage ./packages/lmstudio/default.nix { };
+                    nook-desktop = pkgs.callPackage ./packages/nook-desktop/default.nix {};
+                    theme_pack = pkgs.callPackage ./packages/theme_pack/default.nix { };
+                    wallpapers = pkgs.callPackage ./packages/wallpapers/default.nix { };
+                    zen-browser = pkgs.callPackage ./packages/zen-browser/default.nix { };
+                };
+            };
+
             programs = (lib.mkIf (config.essence.basics.enable == true) {
                 appimage = {
                     enable = true;
