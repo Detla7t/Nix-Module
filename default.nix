@@ -150,6 +150,7 @@ in
                     btop # Resource Monitor
                     cifs-utils # Samba client utils
                     ffmpeg # Multimedia framework
+                    git-credential-manager # it is what it is
                     imagemagick
                     jq
                     rar # Utility for RAR archives
