@@ -1,7 +1,7 @@
 { stdenv, pkgs, fetchurl, lib, pkg-config }:
 stdenv.mkDerivation rec {
     pname = "custom_theme_pack";
-    version = "0.0.7";
+    version = "0.0.8";
 
     current_folder = builtins.toString ./.;
 
@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
     share_archive = builtins.fetchurl {#fetchTarball {#
         url = "file://${current_folder}/share.tar.gz";
         #sha256 = lib.fakeSha256;
-        sha256 = "0djw1xq1j7amji6ylb6kvnrqbhq62cddmkra1pywncsi4bbdm2kz";
+        sha256 = "1mkmqvdxmdz075b677ijfy9yn28s6qmsznqfxw3cw9zrf38w28nh";
     };
 
     dontBuild = true;
