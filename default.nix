@@ -153,7 +153,7 @@ in
                     git-credential-manager # it is what it is
                     imagemagick
                     jq
-                    rar # Utility for RAR archives
+                    # rar # Utility for RAR archives
                     vim
                     wget
                 ];
