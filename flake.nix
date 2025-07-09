@@ -15,5 +15,6 @@
         nixosModules.essence = ./default.nix;
         nixosModules.default = self.nixosModules.essence;
         nixosModules.lib = ./modules/lib/local_lib.nix;
+        nixosModules.version = ./version.nix;
     };
 }
