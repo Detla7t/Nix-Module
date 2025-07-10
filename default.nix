@@ -205,31 +205,6 @@ in
                 git = {
                     enable = lib.mkDefault true; # Source Code Control so that config can always be managed
                     package = pkgs.git;
-                    config = [
-                        {
-                            github = (if (config.essence.programs.git.token != "") then { #DO NOT CHANGE THIS IT WILL THROW AN ERROR WITH mkIf DONT BOTHER
-                                user = "${config.essence.programs.git.username}";
-                                password = "${config.essence.programs.git.token}";
-                            } else {
-                                user = "${config.essence.programs.git.username}";
-                            });
-                            user = {
-                                email = "${config.essence.programs.git.email}";
-                                name = "${config.essence.programs.git.username}";
-                            };
-                            init = {
-                                defaultBranch = "main";
-                            };
-                            url = {
-                                "https://github.com/" = {
-                                    insteadOf = [
-                                        "gh:"
-                                        "github:"
-                                    ];
-                                };
-                            };
-                        }
-                    ];
                 };
                 nano = {
                     enable = lib.mkDefault true;
