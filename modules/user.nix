@@ -56,13 +56,14 @@ let
                 };
                 settings = {
                     desktop = lib.mkOption {
+                        default = { };
                         type = lib.types.submodule {
                             options = desktop_module.options; 
                         };
                     };
                     home = lib.mkOption {
-                        type = lib.types.str;
                         default = "/home/${name}";
+                        type = lib.types.str;
                         description = ''Path to user's home folder'';
                     };
                 };

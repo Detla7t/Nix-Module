@@ -204,7 +204,7 @@ in
                 firefox.enable = lib.mkDefault true; # Add a web browser so user can't be stupid unless they disable
                 git = {
                     enable = lib.mkDefault true; # Source Code Control so that config can always be managed
-                    package = pkgs.git;
+                    package = lib.mkDefault pkgs.git;
                 };
                 nano = {
                     enable = lib.mkDefault true;
