@@ -1,15 +1,11 @@
 { stdenv, pkgs, fetchurl, lib, pkg-config }:
 stdenv.mkDerivation rec {
     pname = "wallpaper_pack";
-    version = "0.0.5";
+    version = "0.0.6";
 
     current_folder = builtins.toString ./.;
 
-    share_archive = builtins.fetchurl {#fetchTarball {#
-        url = "file://${current_folder}/share.tar.gz";
-        #sha256 = lib.fakeSha256;
-        sha256 = "08la6l6k9dbdyxivz71k05bj93xsmqqbdrds4h3wwdd1v67hgf8x";
-    };
+    share_archive = ./share;
 
     #dontUnpack = true;
     dontBuild = true;
@@ -18,8 +14,9 @@ stdenv.mkDerivation rec {
     #dontFixup = true;   # Skips long fixup phase that take ~13 seconds alone. due to it checking every file and there being alot of files
 
     unpackPhase = ''
-        mkdir -p $out
-        tar -xvzf ${share_archive} -C $out
+        mkdir -p $out/share
+        cp -r ${share_archive}/. $out/share
+        #tar -xvzf ${share_archive} -C $out
     '';
 
     #installPhase = ''
