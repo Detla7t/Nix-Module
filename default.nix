@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  modulesPath,
   ...
 }: let
   cfg = config.essence;
@@ -9,7 +10,6 @@
 in {
   imports = [
     # paths of other modules
-
     ./modules/audio.nix
     ./modules/desktop.nix
     ./modules/graphics.nix
@@ -182,7 +182,7 @@ in {
             theme_pack = pkgs.callPackage ./packages/theme_pack/default.nix {};
             wallpapers = pkgs.callPackage ./packages/wallpapers/default.nix {};
             void-editor = pkgs.callPackage ./packages/void-editor/default.nix {
-                vscode-generic = <nixpkgs/pkgs/applications/editors/vscode/generic.nix>;
+                vscode-generic = (modulesPath + "../../pkgs/applications/editors/vscode/generic.nix"); #<nixpkgs/pkgs/applications/editors/vscode/generic.nix>;
             };
             zen-browser = pkgs.callPackage ./packages/zen-browser/default.nix {};
           };
