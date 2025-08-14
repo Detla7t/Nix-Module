@@ -182,7 +182,7 @@ in {
             theme_pack = pkgs.callPackage ./packages/theme_pack/default.nix {};
             wallpapers = pkgs.callPackage ./packages/wallpapers/default.nix {};
             void-editor = pkgs.callPackage ./packages/void-editor/default.nix {
-                vscode-generic = (pkgs + "/applications/editors/vscode/generic.nix");
+                vscode-generic = <nixpkgs/pkgs/applications/editors/vscode/generic.nix>;
             };
             zen-browser = pkgs.callPackage ./packages/zen-browser/default.nix {};
           };
