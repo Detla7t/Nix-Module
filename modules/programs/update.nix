@@ -103,9 +103,9 @@
 
         branch=$(git rev-parse --abbrev-ref HEAD)
         upstream_exists=0
-        if git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1; then
+        if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
             upstream_exists=1
-            unpushed=$(git rev-list --count @{u}..HEAD)
+            unpushed=$(git rev-list --count '@{u}'..HEAD)
         else
             upstream_exists=0
             # No upstream configured. Treat any commits as unpushed.
@@ -195,7 +195,7 @@
             # Ask to push (default yes)
             if ask_push_default_yes; then
                 branch=$(git rev-parse --abbrev-ref HEAD)
-                if git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1; then
+                if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
                     if ! git push; then
                         echo "git push failed"
                         return 1
