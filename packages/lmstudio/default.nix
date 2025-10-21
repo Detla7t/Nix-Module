@@ -23,6 +23,7 @@
     ];
     sourceProvenance = with lib.sourceTypes; [binaryNativeCode];
   };
+  varib = /. + "linux.nix";
 in
   if stdenv.hostPlatform.isDarwin
   then
@@ -35,7 +36,7 @@ in
         ;
     }
   else
-    callPackage ./linux.nix {
+    callPackage varib {
       inherit
         pname
         version

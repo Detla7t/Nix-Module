@@ -15,6 +15,7 @@ in {
     ./modules/graphics.nix
     ./modules/lockscreen.nix
     ./modules/user.nix
+    ./modules/programs/update.nix
   ];
 
   # TODO Pull in Serivce Creation into this file. as that is the only way to build out togglable service service scripts for each user
@@ -180,10 +181,11 @@ in {
             #lmstudio = pkgs.callPackage ./packages/lmstudio/default.nix {};
             nook-desktop = pkgs.callPackage ./packages/nook-desktop/default.nix {};
             theme_pack = pkgs.callPackage ./packages/theme_pack/default.nix {};
-            wallpapers = pkgs.callPackage ./packages/wallpapers/default.nix {};
             void-editor = pkgs.callPackage ./packages/void-editor/default.nix {
                 vscode-generic = (modulesPath + "../../../pkgs/applications/editors/vscode/generic.nix"); #<nixpkgs/pkgs/applications/editors/vscode/generic.nix>;
             };
+            wallpapers = pkgs.callPackage ./packages/wallpapers/default.nix {};
+            winboat = pkgs.callPackage ./packages/winboat/package.nix {};
             zen-browser = pkgs.callPackage ./packages/zen-browser/default.nix {};
           };
         };
