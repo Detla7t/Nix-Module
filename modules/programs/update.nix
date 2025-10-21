@@ -268,8 +268,13 @@ in {
   config = let 
         cfg = config.essence.updater;
   in {
-        environment.variables = lib.mkIf (cfg.enable == true) { 
-            FLAKE_MAX_JOBS = cfg.max-jobs; 
+        environment = lib.mkIf (cfg.enable == true) {
+            systemPackages = [
+                Update_script
+            ];
+            variables = { 
+                FLAKE_MAX_JOBS = cfg.max-jobs; 
+            };
         };
         programs = lib.mkIf (cfg.enable == true) {
             nh.enable = true;
