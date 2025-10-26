@@ -355,7 +355,7 @@
             git_push
 
             echo "Running final build to finish update."
-            if ! _run_cmd $NIX_BUILD_COMMAND; then
+            if ! _run_cmd "$NIX_BUILD_COMMAND"; then
                 echo "Real build failed."
                 return 1
             fi
@@ -402,7 +402,7 @@
                 fi
                 echo "Committed flake.lock with message: $commit_msg"
 
-                if $(yes_no_question "Push local commits to remote?" "yes" "true" "false"); then
+                if yes_no_question "Push local commits to remote?" "yes" "true" "false"; then
                     if [ "$HAS_GIT" -eq 1 ]; then
                         if ! push_commits; then
                             echo "git push failed"
@@ -429,14 +429,14 @@
         }
         nh_path () {
             echo "Running 'nh update command'..."
-            if ! $($NH_UPGRADE_COMMAND); then
+            if ! eval "$NH_UPGRADE_COMMAND"; then
                 echo "flake update failed"
                 return 1
             fi
         }
         stock_nix_path() {
             echo "Running 'nix flake update command'..."
-            if ! $($NIX_UPGRADE_COMMAND); then
+            if ! eval "$NIX_UPGRADE_COMMAND"; then
                 echo "flake update failed"
                 return 1
             fi
