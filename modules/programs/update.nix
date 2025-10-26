@@ -33,9 +33,9 @@
     command -v nixos-rebuild >/dev/null 2>&1 && HAS_NIXOS_REBUILD=1
 
     # Default commands
-    NH_DRY_COMMAND=''${NH_DRY_COMMAND:-'nh os switch -H "'$(hostname)'" -n'}
-    NH_BUILD_COMMAND=''${NH_BUILD_COMMAND:-'nh os switch -H "'$(hostname)'"'}
-    NH_UPGRADE_COMMAND=''${NH_UPGRADE_COMMAND:-'nh os switch -H "'$(hostname)'" -u'}
+    NH_DRY_COMMAND=''${NH_DRY_COMMAND:-'nh os switch . -H "'$(hostname)'" -n'}
+    NH_BUILD_COMMAND=''${NH_BUILD_COMMAND:-'nh os switch . -H "'$(hostname)'"'}
+    NH_UPGRADE_COMMAND=''${NH_UPGRADE_COMMAND:-'nh os switch . -H "'$(hostname)'" -u'}
     NIX_DRY_COMMAND=''${NIX_DRY_COMMAND:-'nixos-rebuild dry-build --flake .#'$(hostname)'''}
     NIX_BUILD_COMMAND=''${NIX_BUILD_COMMAND:-'nixos-rebuild switch --flake .#'$(hostname)'''}
     NIX_UPGRADE_COMMAND=''${NIX_UPGRADE_COMMAND:-'nix flake lock'}
