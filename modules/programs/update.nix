@@ -328,7 +328,7 @@
         }
         nh_path() {
             echo "Running dry-run to check for errors"
-            if ! _run_nh $NH_DRY_COMMAND; then
+            if ! _run_nh "$NH_DRY_COMMAND"; then
                 echo "Dry-run build failed. Aborting without pushing."
                 return 1
             fi
@@ -337,7 +337,7 @@
             git_push
 
             echo "Running final build to finish update."
-            if ! _run_nh $NH_BUILD_COMMAND; then
+            if ! _run_nh "$NH_BUILD_COMMAND"; then
                 echo "Real build failed."
                 return 1
             fi
@@ -346,7 +346,7 @@
         }
         stock_nix_path() {
             echo "Running dry-run to check for errors"
-            if ! _run_cmd $NIX_DRY_COMMAND; then
+            if ! _run_cmd "$NIX_DRY_COMMAND"; then
                 echo "Dry-run build failed. Aborting without pushing."
                 return 1
             fi
