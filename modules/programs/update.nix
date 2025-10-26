@@ -177,7 +177,7 @@
         fi
         if [ -n "$(git status --porcelain -- 'flake.lock')" ]; then
             echo "flake.lock file has uncommited changes would you like to auto commit"
-            if $(yes_no_question "Push local commits to remote?" "yes" "true" "false"); then
+            if yes_no_question "Push local commits to remote?" "yes" "true" "false"; then
                 git add flake.lock
                 commit_msg="Updated flake.lock inputs."
                 if ! git commit -m "$commit_msg"; then
@@ -210,7 +210,7 @@
             fi
             echo "Committed flake.lock with message: $commit_msg"
 
-            if $(yes_no_question "Push local commits to remote?" "yes" "true" "false"); then
+            if yes_no_question "Push local commits to remote?" "yes" "true" "false"; then
                 if [ "$HAS_GIT" -eq 1 ]; then
                     if ! push_commits; then
                         echo "git push failed"
@@ -319,7 +319,7 @@
             
             if [ "$unpushed" -gt 0 ]; then
                 echo "Local branch '$branch' has $unpushed unpushed commit(s)."
-                if $(yes_no_question "Push local commits to remote?" "yes" "true" "false"); then
+                if yes_no_question "Push local commits to remote?" "yes" "true" "false"; then
                     push_yes=1
                 else
                     push_yes=0
