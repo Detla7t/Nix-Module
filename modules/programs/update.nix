@@ -54,9 +54,9 @@
     # SYM_INFO="●"
 
     # Override
-    if [[ "$HAS_GIT" -eq 1 && $FLAKE_DIR_IS_GIT_REPO -eq true ]]; then
+    if [[ "$HAS_GIT" -eq 1 && "$FLAKE_DIR_IS_GIT_REPO" = "true" ]]; then
         HAS_GIT=1
-    elif [[ "$HAS_GIT" -eq 1 && $FLAKE_DIR_IS_GIT_REPO -eq false ]]; then
+    elif [[ "$HAS_GIT" -eq 1 && "$FLAKE_DIR_IS_GIT_REPO" = "false" ]]; then
         echo "Warning: Git is installed but flake directory is not managed by git."
         HAS_GIT=0
     else
