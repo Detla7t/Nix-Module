@@ -16,6 +16,7 @@
     set -euo pipefail
 
     FLAKE_DIR="${config.programs.nh.flake}"
+    FLAKE_DIR_IS_GIT_REPO=$(git -C "$FLAKE_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1 && echo true || echo false)
     FLAKE_MAX_JOBS="''${FLAKE_MAX_JOBS:-4}"
     SHOW_UPDATER_WARNINGS="''${SHOW_UPDATER_WARNINGS:-1}"
 
@@ -51,6 +52,16 @@
     SYM_OK="✔"
     SYM_NO="✖"
     # SYM_INFO="●"
+
+    # Override
+    if [[ "$HAS_GIT" -eq 1 && $FLAKE_DIR_IS_GIT_REPO -eq true ]]; then
+        HAS_GIT=1
+    elif [[ "$HAS_GIT" -eq 1 && $FLAKE_DIR_IS_GIT_REPO -eq false ]]; then
+        echo "Warning: Git is installed but flake directory is not managed by git."
+        HAS_GIT=0
+    else
+        HAS_GIT=0
+    fi
 
     usage() {
         echo -e "''${BOLD}Usage:''${RESET} update [all|flake|flatpak|upgrade|help] [-- <args>] \n"
