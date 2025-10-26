@@ -231,9 +231,9 @@
         fi
 
         if [ "''${#cmd_args[@]}" -gt 0 ]; then
-            eval "''${base_cmd[@]} ''${cmd_args[@]}"
+            eval "''${base_cmd[*]} ''${cmd_args[*]}"
         else
-            eval "''${base_cmd[@]}"
+            eval "''${base_cmd[*]}"
         fi
     }
     # Helper to run nh with optional extra args or FLAKE_MAX_JOBS
@@ -247,9 +247,9 @@
         fi
 
         if [ "''${#nh_args[@]}" -gt 0 ]; then
-            eval "''${base_cmd[@]} -- ''${nh_args[@]}"
+            eval "''${base_cmd[*]} -- ''${nh_args[*]}"
         else
-            eval "''${base_cmd[@]}"
+            eval "''${base_cmd[*]}"
         fi
     }
 
