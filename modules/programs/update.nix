@@ -74,16 +74,16 @@
         echo
         echo -e "''${BOLD}Commands:''${RESET}"
         cat <<EOF
-    help        Show this message
-    all         Update flatpaks then the flake (flake run includes git checks, dry-run, optional push, real build)
-    flatpak     Run 'flatpak update' only. No git changes.
-    flake       Run flake update: verify git clean, dry-run build, optional push, real build.
-    upgrade     Run 'nix flake update' in the repo root, commit flake.lock with default message and optionally push.
+      help        Show this message
+      all         Update flatpaks then the flake (flake run includes git checks, dry-run, optional push, real build)
+      flatpak     Run 'flatpak update' only. No git changes.
+      flake       Run flake update: verify git clean, dry-run build, optional push, real build.
+      upgrade     Run 'nix flake update' in the repo root, commit flake.lock with default message and optionally push.
 
     Pass extra args to the internal 'nh' calls by using the '--' separator.
     Examples:
-    update flake -- -j 2
-    update all -- -j 2 -v
+      update flake -- -j 2
+      update all -- -j 2 -v
         
     EOF
     }
@@ -154,18 +154,18 @@
     }
 
     update_flatpak() {
-        if [ "$HAS_FLATPAK" -eq 0 ]; then
+        if [ "$HAS_FLATPAK" -eq 1 ]; then
+            echo "==> Running flatpak update"
+            if ! flatpak update; then
+                echo "flatpak update failed"
+                return 1
+            fi
+            echo "flatpak update complete"
+            return 0
+        else
             _warn "flatpak not found. 'update flatpak' will fail."
             echo "Skipping flatpak update"
-            return 1
         fi
-        echo "==> Running flatpak update"
-        if ! flatpak update; then
-            echo "flatpak update failed"
-            return 1
-        fi
-        echo "flatpak update complete"
-        return 0
     }
 
     # Git helpers
@@ -193,39 +193,6 @@
             return 1
         fi
         return 0
-    }
-
-    commit_flake_lock() {
-        # If flake.lock changed or is untracked, commit it
-        if [ "$HAS_GIT" -eq 0 ]; then
-            _warn "git is not available. skipping flake.lock git management."
-            return 0
-        fi
-        if [ -n "$(git status --porcelain -- 'flake.lock')" ]; then
-            git add flake.lock
-            commit_msg="Updated flake.lock"
-            if ! git commit -m "$commit_msg"; then
-                echo "git commit failed"
-                return 1
-            fi
-            echo "Committed flake.lock with message: $commit_msg"
-
-            if yes_no_question "Push local commits to remote?" "yes" "true" "false"; then
-                if [ "$HAS_GIT" -eq 1 ]; then
-                    if ! push_commits; then
-                        echo "git push failed"
-                        return 1
-                    fi
-                    echo "Push complete."
-                else
-                    _warn "git not available. Cannot push committed flake.lock."
-                fi
-            else
-                echo "Not pushing commits."
-            fi
-        else
-            echo "flake.lock unchanged; no commit needed."
-        fi
     }
 
     push_commits() {
