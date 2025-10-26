@@ -50,7 +50,7 @@
     # Symbols
     SYM_OK="✔"
     SYM_NO="✖"
-    SYM_INFO="●"
+    # SYM_INFO="●"
 
     usage() {
         echo -e "''${BOLD}Usage:''${RESET} update [all|flake|flatpak|upgrade|help] [-- <args>] \n"
@@ -239,7 +239,7 @@
         local branch
         branch=$(git rev-parse --abbrev-ref HEAD)
 
-        if git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1; then
+        if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
             if ! git push; then
                 echo "git push failed"
                 return 1
@@ -310,8 +310,8 @@
             # Determine unpushed commits if git is available
             unpushed=0
             branch=$(git rev-parse --abbrev-ref HEAD)
-            if git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1; then
-                unpushed=$(git rev-list --count @{u}..HEAD)
+            if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
+                unpushed=$(git rev-list --count '@{u}'..HEAD)
             else
                 unpushed=$(git rev-list --count HEAD)
             fi
