@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
     };
 
     dontBuild = true;
-    dontWrapQtApps = false;
+    dontWrapQtApps = true;
     nativeBuildInputs = [ 
         makeWrapper 
         autoPatchelfHook 
@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
         gcc-unwrapped 
         glib 
         glibc 
-        libsForQt5.full 
+        libsForQt5.qt5.qtbase 
         libGL 
         libxkbcommon 
         stdenv.cc.cc.lib
@@ -109,7 +109,7 @@ stdenv.mkDerivation rec {
     '';
 
     preBuild = ''
-        addAutoPatchelfSearchPath ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms
+        addAutoPatchelfSearchPath ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms
     '';
 
     #install -m755 $out/$pname/demonsaw $out/bin/demonsaw-patched
@@ -124,23 +124,23 @@ stdenv.mkDerivation rec {
         chmod +x $out/bin/generate_demonsaw_toml.sh
         makeWrapper $out/$pname/demonsaw $out/bin/demonsaw \
             --chdir $out/$pname \
-            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.full libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
+            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.qt5.qtbase  libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
             --prefix QT_QPA_PLATFORM : xcb \
-            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
+            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
             --prefix QT_DEBUG_PLUGINS : 1 \
             --run $out/bin/generate_demonsaw_toml.sh \
             --add-flags '${tomlLocation}${tomlName}'
         makeWrapper $out/$pname/demonsaw_cli $out/bin/demonsaw_cli \
             --chdir $out/$pname \
-            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.full libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
-            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
+            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.qt5.qtbase  libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
+            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
             --prefix QT_DEBUG_PLUGINS : 1 \
             --run $out/bin/generate_demonsaw_toml.sh \
             --add-flags '${tomlLocation}${tomlName}'
         makeWrapper $out/$pname/demonsaw_router $out/bin/demonsaw_router \
             --chdir $out/$pname \
-            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.full libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
-            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
+            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.qt5.qtbase  libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
+            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
             --prefix QT_DEBUG_PLUGINS : 1 \
             --run $out/bin/generate_demonsaw_toml.sh \
             --add-flags '${tomlLocation}${tomlName}'
@@ -150,21 +150,21 @@ stdenv.mkDerivation rec {
         echo '${extraConfig}' > $out/$pname/configured_demonsaw.toml
         makeWrapper $out/$pname/demonsaw $out/bin/demonsaw \
             --chdir $out/$pname \
-            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.full libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
+            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.qt5.qtbase  libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
             --prefix QT_QPA_PLATFORM : xcb \
-            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
+            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
             --prefix QT_DEBUG_PLUGINS : 1 \
             --add-flags $out/$pname/configured_demonsaw.toml
         makeWrapper $out/$pname/demonsaw_cli $out/bin/demonsaw_cli \
             --chdir $out/$pname \
-            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.full libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
-            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
+            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.qt5.qtbase  libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
+            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
             --prefix QT_DEBUG_PLUGINS : 1 \
             --add-flags $out/$pname/configured_demonsaw.toml
         makeWrapper $out/$pname/demonsaw_router $out/bin/demonsaw_router \
             --chdir $out/$pname \
-            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.full libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
-            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
+            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.qt5.qtbase  libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
+            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
             --prefix QT_DEBUG_PLUGINS : 1 \
             --add-flags $out/$pname/configured_demonsaw.toml
         ''}
@@ -172,14 +172,14 @@ stdenv.mkDerivation rec {
         echo -e "Building anonymous wrapper"
         makeWrapper $out/$pname/demonsaw $out/bin/demonsaw-anon \
             --chdir $out/$pname \
-            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.full libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
+            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.qt5.qtbase  libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
             --prefix QT_QPA_PLATFORM : xcb \
-            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
+            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
             --prefix QT_DEBUG_PLUGINS : 1
         makeWrapper $out/$pname/demonsaw_cli $out/bin/demonsaw-anon_cli \
             --chdir $out/$pname \
-            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.full libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
-            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.full}/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
+            --prefix LD_LIBRARY_PATH : "$out/$pname/lib:${lib.makeLibraryPath [ dbus fontconfig freetype glib glibc libsForQt5.qt5.qtbase  libGL libxkbcommon xorg.libX11 zlib gcc-unwrapped stdenv.cc.cc.lib]}" \
+            --prefix QT_PLUGIN_PATH : ${pkgs.libsForQt5.qt5.qtbase }/lib/qt-6/plugins/platforms:$out/$pname/lib/platforms \
             --prefix QT_DEBUG_PLUGINS : 1
         ''}
 

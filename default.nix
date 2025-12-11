@@ -185,7 +185,7 @@ in {
                 vscode-generic = (modulesPath + "../../../pkgs/applications/editors/vscode/generic.nix"); #<nixpkgs/pkgs/applications/editors/vscode/generic.nix>;
             };
             wallpapers = pkgs.callPackage ./packages/wallpapers/default.nix {};
-            winboat = pkgs.callPackage ./packages/winboat/package.nix {};
+            # winboat = pkgs.callPackage ./packages/winboat/package.nix {};
             zen-browser = pkgs.callPackage ./packages/zen-browser/default.nix {};
           };
         };
