@@ -176,7 +176,7 @@ in {
 
         nixpkgs.config = {
           packageOverrides = pkgs: {
-            curl-impersonate = pkgs.callPackage ./packages/curl-impersonate/package.nix {};
+            curl-impersonate-1-25 = pkgs.callPackage ./packages/curl-impersonate/package.nix {};
             demonsaw = pkgs.callPackage ./packages/demonsaw/default.nix {};
             #fooyin = pkgs.callPackage ./packages/fooyin/default.nix {};
             #lmstudio = pkgs.callPackage ./packages/lmstudio/default.nix {};
