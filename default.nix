@@ -181,10 +181,10 @@ in {
             #fooyin = pkgs.callPackage ./packages/fooyin/default.nix {};
             #lmstudio = pkgs.callPackage ./packages/lmstudio/default.nix {};
             nook-desktop = pkgs.callPackage ./packages/nook-desktop/default.nix {};
-            ta-lib = pkgs.callPackage ./nix/ta-lib.nix {};
+            ta-lib = pkgs.callPackage ./packages/ta-lib/default.nix {};
             python313 = pkgs.python313.override {
                 packageOverrides = python-self: python-super: {
-                    ta-lib = python-self.callPackage ./nix/py-ta-lib.nix { ta-lib = pkgs.callPackage ./nix/ta-lib.nix {}; };
+                    ta-lib = python-self.callPackage ./packages/python-ta-lib/default.nix { ta-lib = pkgs.callPackage ./packages/ta-lib/default.nix {}; };
                 };
             };
             theme_pack = pkgs.callPackage ./packages/theme_pack/default.nix {};
