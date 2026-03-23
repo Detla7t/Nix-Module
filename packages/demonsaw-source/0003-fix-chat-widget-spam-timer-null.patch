@@ -1,0 +1,30 @@
+--- a/code/4_client_desktop/widget/chat_widget.cpp
++++ b/code/4_client_desktop/widget/chat_widget.cpp
+@@ -194,6 +194,9 @@
+ 		m_resize_timer = new QTimer(this);
+ 		m_resize_timer->setSingleShot(true);
+ 
++		m_spam_timer = new QTimer(this);
++		m_spam_timer->setSingleShot(true);
++
+ 		// Event
+ 		m_table->installEventFilter(this);
+ 
+@@ -218,6 +221,17 @@
+ 			m_table->scroll();
+ 		});
+ 
++		connect(m_spam_timer, &QTimer::timeout, this, [&]
++		{
++			m_enabled = true;
++			const auto qtext = m_text->toPlainText().trimmed();
++			if (qtext.length() >= chat::min_text)
++			{
++				m_enter_button->setEnabled(true);
++				m_enter_button->setStyleSheet(m_enter_style);
++			}
++		});
++
+ 		connect(m_emoji, &QPushButton::clicked, this, [&] { show_emoji(true); });
+ 
+ 		connect(m_enter_button, &QPushButton::clicked, [&]() { on_add(); });

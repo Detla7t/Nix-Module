@@ -1,0 +1,17 @@
+--- a/code/4_core/security/security.cpp
++++ b/code/4_core/security/security.cpp
+@@ -29,13 +29,7 @@
+ {
+ 	std::string security::str(const void* input, const size_t input_size)
+ 	{
+-		std::string output;
+-		output.reserve(input_size);
+-
+-		CryptoPP::StringSink sink(output);
+-		sink.Put(reinterpret_cast<const byte*>(input), input_size);
+-
+-		return output;
++		return std::string(reinterpret_cast<const char*>(input), input_size);
+ 	}
+ 
+ 	std::string security::str(const CryptoPP::Integer& input)

@@ -1,0 +1,222 @@
+--- a/code/0_cppnetlib/boost/network/protocol/http/client/async_impl.hpp
++++ b/code/0_cppnetlib/boost/network/protocol/http/client/async_impl.hpp
+@@ -54,7 +54,7 @@
+                                   : std::make_shared<boost::asio::io_service>()),
+         service_(*service_ptr),
+         resolver_(service_),
+-        sentinel_(new boost::asio::io_service::work(service_)),
++        sentinel_(boost::asio::make_work_guard(service_)),
+         certificate_filename_(std::move(certificate_filename)),
+         verify_path_(std::move(verify_path)),
+         certificate_file_(std::move(certificate_file)),
+@@ -95,7 +95,7 @@
+   std::shared_ptr<boost::asio::io_service> service_ptr;
+   boost::asio::io_service& service_;
+   resolver_type resolver_;
+-  std::shared_ptr<boost::asio::io_service::work> sentinel_;
++  boost::asio::executor_work_guard<boost::asio::io_context::executor_type> sentinel_;
+   std::shared_ptr<std::thread> lifetime_thread_;
+   optional<string_type> certificate_filename_;
+   optional<string_type> verify_path_;
+
+--- a/code/0_cppnetlib/boost/network/protocol/http/client/connection/sync_base.hpp
++++ b/code/0_cppnetlib/boost/network/protocol/http/client/connection/sync_base.hpp
+@@ -43,7 +43,7 @@
+                    string_type const& port, resolver_function_type resolve_) {
+     using boost::asio::ip::tcp;
+     boost::system::error_code error = boost::asio::error::host_not_found;
+-    typename resolver_type::iterator endpoint_iterator, end;
++    typename resolver_base::resolver_iterator endpoint_iterator, end;
+     boost::tie(endpoint_iterator, end) = resolve_(resolver_, hostname, port);
+     while (error && endpoint_iterator != end) {
+       socket_.close();
+
+--- a/code/0_cppnetlib/boost/network/protocol/http/policies/async_resolver.hpp
++++ b/code/0_cppnetlib/boost/network/protocol/http/policies/async_resolver.hpp
+@@ -24,8 +24,8 @@
+ template <class Tag>
+ struct async_resolver : std::enable_shared_from_this<async_resolver<Tag> > {
+   typedef typename resolver<Tag>::type resolver_type;
+-  typedef typename resolver_type::iterator resolver_iterator;
+-  typedef typename resolver_type::query resolver_query;
++  typedef typename resolver_type::results_type resolver_results_type;
++  typedef typename resolver_results_type::iterator resolver_iterator;
+   typedef std::pair<resolver_iterator, resolver_iterator>
+       resolver_iterator_pair;
+   typedef typename string<Tag>::type string_type;
+@@ -57,13 +57,12 @@
+       }
+     }
+ 
+-    typename resolver_type::query q(host, std::to_string(port));
+     auto self = this->shared_from_this();
+     resolver_.async_resolve(
+-        q, resolver_strand_->wrap([=](boost::system::error_code const &ec,
+-                                      resolver_iterator endpoint_iterator) {
++        host, std::to_string(port), resolver_strand_->wrap([=](boost::system::error_code const &ec,
++                                      resolver_results_type results) {
+           self->handle_resolve(boost::to_lower_copy(host), once_resolved, ec,
+-                               endpoint_iterator);
++                               results.begin());
+         }));
+   }
+ 
+@@ -75,10 +74,10 @@
+     bool inserted = false;
+     if (!ec && cache_resolved_) {
+       std::tie(iter, inserted) = endpoint_cache_.insert(std::make_pair(
+-          host, std::make_pair(endpoint_iterator, resolver_iterator())));
++          host, std::make_pair(endpoint_iterator, resolver_iterator{})));
+       once_resolved(ec, iter->second);
+     } else {
+-      once_resolved(ec, std::make_pair(endpoint_iterator, resolver_iterator()));
++      once_resolved(ec, std::make_pair(endpoint_iterator, resolver_iterator{}));
+     }
+   }
+ };
+
+--- a/code/0_cppnetlib/boost/network/protocol/http/policies/sync_resolver.hpp
++++ b/code/0_cppnetlib/boost/network/protocol/http/policies/sync_resolver.hpp
+@@ -22,8 +22,8 @@
+ struct sync_resolver {
+ 
+   typedef typename resolver<Tag>::type resolver_type;
+-  typedef typename resolver_type::iterator resolver_iterator;
+-  typedef typename resolver_type::query resolver_query;
++  typedef typename resolver_type::results_type resolver_results_type;
++  typedef typename resolver_results_type::iterator resolver_iterator;
+   typedef std::pair<resolver_iterator, resolver_iterator>
+       resolver_iterator_pair;
+ 
+@@ -44,20 +44,19 @@
+           endpoint_cache_.find(hostname);
+       if (cached_iterator == endpoint_cache_.end()) {
+         bool inserted = false;
+-        std::tie(cached_iterator, inserted) =
+-            endpoint_cache_.insert(std::make_pair(
+-                boost::to_lower_copy(hostname),
+-                std::make_pair(
+-                    resolver_.resolve(resolver_query(
+-                        hostname, port, resolver_query::numeric_service)),
+-                    resolver_iterator())));
++        {
++          auto _r = resolver_.resolve(hostname, port);
++          std::tie(cached_iterator, inserted) =
++              endpoint_cache_.insert(std::make_pair(
++                  boost::to_lower_copy(hostname),
++                  std::make_pair(_r.begin(), _r.end())));
++        }
+       };
+       return cached_iterator->second;
+     };
+ 
+-    return std::make_pair(resolver_.resolve(resolver_query(
+-                              hostname, port, resolver_query::numeric_service)),
+-                          resolver_iterator());
++    auto _r = resolver_.resolve(hostname, port);
++    return std::make_pair(_r.begin(), _r.end());
+   };
+ };
+ 
+
+--- a/code/4_core/component/service/service_component.cpp
++++ b/code/4_core/component/service/service_component.cpp
+@@ -59,10 +59,10 @@
+ 
+ 		if (invalid())
+ 		{
+-			m_service = std::make_shared<boost::asio::io_service>();
+-			m_strand = std::make_shared<boost::asio::io_service::strand>(*m_service);
++			m_service = std::make_shared<boost::asio::io_context>();
++			m_strand = std::make_shared<boost::asio::io_context::strand>(*m_service);
+ 			m_thread_group = std::make_shared<boost::thread_group>();
+-			m_work = std::make_shared<boost::asio::io_service::work>(*m_service);
++			m_work = std::make_shared<boost::asio::executor_work_guard<boost::asio::io_context::executor_type>>(boost::asio::make_work_guard(*m_service));
+ 
+ 			// Threads
+ 			const auto self = shared_from_this();
+@@ -124,7 +124,7 @@
+ 
+ 		thread_lock(m_timers);
+ 		for (const auto& timer : *m_timers)
+-			timer->cancel(error);
++			timer->cancel();
+ 
+ 		m_timers->clear();
+ 	}
+
+--- a/code/4_core/component/service/service_component.h
++++ b/code/4_core/component/service/service_component.h
+@@ -158,7 +158,7 @@
+ 		if (valid())
+ 		{
+ 			const auto service = get_service();
+-			m_service->dispatch([service, t]()
++			boost::asio::dispatch(*m_service, [service, t]()
+ 			{
+ 				if (!service->stopped())
+ 					t();
+@@ -172,7 +172,7 @@
+ 		if (valid())
+ 		{
+ 			const auto service = get_service();
+-			m_strand->dispatch([service, t]()
++			boost::asio::dispatch(*m_strand, [service, t]()
+ 			{
+ 				if (!service->stopped())
+ 					t();
+@@ -187,7 +187,7 @@
+ 		if (valid())
+ 		{
+ 			const auto service = get_service();
+-			m_service->post([service, t]()
++			boost::asio::post(*m_service, [service, t]()
+ 			{
+ 				if (!service->stopped())
+ 					t();
+@@ -201,7 +201,7 @@
+ 		if (valid())
+ 		{
+ 			const auto service = get_service();
+-			m_strand->post([service, t]()
++			boost::asio::post(*m_strand, [service, t]()
+ 			{
+ 				if (!service->stopped())
+ 					t();
+@@ -224,7 +224,7 @@
+ 		const auto self = shared_from_this();
+ 		const auto timers = get_timers();
+ 
+-		timer->expires_from_now(std::chrono::milliseconds(ms));
++		timer->expires_after(std::chrono::milliseconds(ms));
+ 		timer->async_wait([self, service, timer, timers, call](const boost::system::error_code& error)
+ 		{
+ 			// Timers
+
+--- a/code/4_core/system/type.h
++++ b/code/4_core/system/type.h
+@@ -264,9 +264,9 @@
+ 	//
+ 	//
+ 	/////////////////////////////////////////////////////////////////////////////
+-	using io_service_ptr = std::shared_ptr<boost::asio::io_service>;
+-	using io_strand_ptr = std::shared_ptr<boost::asio::io_service::strand>;
+-	using io_work_ptr = std::shared_ptr<boost::asio::io_service::work>;
++	using io_service_ptr = std::shared_ptr<boost::asio::io_context>;
++	using io_strand_ptr = std::shared_ptr<boost::asio::io_context::strand>;
++	using io_work_ptr = std::shared_ptr<boost::asio::executor_work_guard<boost::asio::io_context::executor_type>>;
+ 
+ 	using acceptor_ptr = std::shared_ptr<boost::asio::ip::tcp::acceptor>;
+ 	using address_ptr = std::shared_ptr<boost::asio::ip::address>;
+
+--- a/code/4_core/utility/io/file_util.h
++++ b/code/4_core/utility/io/file_util.h
+@@ -57,7 +57,7 @@
+ 		static void clear(const file_component::ptr file) { clear(file->get_data()); }
+ 		static void clear(const file_component& file) { clear(file.get_data()); }
+
+-		static void copy(const boost::filesystem::path& source, const boost::filesystem::path& target) { boost::filesystem::copy_file(source, target, boost::filesystem::copy_option::overwrite_if_exists); }
++		static void copy(const boost::filesystem::path& source, const boost::filesystem::path& target) { boost::filesystem::copy_file(source, target, boost::filesystem::copy_options::overwrite_existing); }
+ 		static void copy(const std::wstring& source, const std::wstring& target) { copy(boost::filesystem::path(source), boost::filesystem::path(target)); }
+ 		static void copy(const std::string& source, const std::string& target) { copy(boost::filesystem::path(source), boost::filesystem::path(target)); }
+ 		static void copy(const char* source, const char* target) { copy(boost::filesystem::path(source), boost::filesystem::path(target)); }
