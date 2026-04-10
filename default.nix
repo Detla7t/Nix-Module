@@ -14,6 +14,7 @@ in {
     ./modules/desktop.nix
     ./modules/graphics.nix
     ./modules/lockscreen.nix
+    ./modules/patches.nix
     ./modules/user.nix
     ./modules/programs/update.nix
   ];
@@ -185,7 +186,11 @@ in {
             python313 = pkgs.python313.override {
                 packageOverrides = python-self: python-super: {
                     ta-lib = python-self.callPackage ./packages/python-ta-lib/default.nix { ta-lib = pkgs.callPackage ./packages/ta-lib/default.nix {}; };
-                    rapids-cudf = python-self.callPackage ./packages/cudf/default.nix;
+                    rapids-cudf = python-self.callPackage ./packages/cudf/default.nix {
+                      # Match your system CUDA version.  If you use cudaPackages (without
+                      # a version suffix) adjust accordingly.
+                      cudaPackages = cudaPackages_12_8;
+                    };
                 };
             };
             theme_pack = pkgs.callPackage ./packages/theme_pack/default.nix {};
