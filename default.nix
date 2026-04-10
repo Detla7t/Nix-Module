@@ -189,7 +189,7 @@ in {
                     rapids-cudf = python-self.callPackage ./packages/cudf/default.nix {
                       # Match your system CUDA version.  If you use cudaPackages (without
                       # a version suffix) adjust accordingly.
-                      cudaPackages = cudaPackages_12_8;
+                      cudaPackages = pkgs.cudaPackages_12_8;
                     };
                 };
             };
